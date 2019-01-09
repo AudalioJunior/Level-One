@@ -1,0 +1,227 @@
+Program Trabalho;
+uses crt;
+
+Type
+dados=record
+  dia:integer;
+  mes: integer;
+  ano: integer;
+  intensidade:integer;
+  condicao: string;
+  verificador: integer;
+  marca: char;
+end;
+
+Const
+tmx=300;
+
+
+Var
+city: array[1..tmx, 1..tmx] of dados;
+opcao: integer;
+
+//Opção1: Auxilia na verificação se caiu dois raios em um mesmo lugar.
+function verificacao(i, j: integer):boolean;
+begin
+  if (city[i][j].verificador)>(0) then
+  verificacao:= true
+  else
+  verificacao:= false;
+  
+end;
+
+//Opção1: Procedimento responsável pela realização da opção.
+procedure MarcarRaio();
+var
+i,j:integer;
+begin
+  clrscr;
+  writeln('Informe as coordenadas desejadas');
+  writeln('Digite a coordenada X');
+  readln(i);
+  writeln('Digite a coordenada Y');
+  readln(j);
+  
+  //Verificação
+  if(verificacao(i,j) = true) then
+  begin
+    write('Não caem dois raios no mesmo lugar!');
+    opcao:=6;
+  end
+  else
+  
+  begin
+    //Informações da data
+    writeln('Digite o dia');
+    readln(city[i][j].dia);
+    writeln('Digite o mês');
+    readln(city[i][j].mes);
+    writeln('Digite o ano');
+    readln(city[i][j].ano);
+    
+    //Intensidade
+    writeln('Digite o valor da intensidade do raio');
+    readln(city[i][j].intensidade);
+    writeln('Digite a condição do clima');
+    readln(city[i][j].condicao);
+    //Confirmação
+    city[i][j].marca:= 'x';
+    city[i][j].verificador:= 1;
+    clrscr;
+    Writeln('Raio arquivado com sucesso!');
+    writeln('');
+    
+  end;
+  
+  
+end;
+
+//Opção 2: Função responsavel de conta raios por ano.
+function raiosAno(): integer;
+var
+i, j, contr, year: integer;
+begin
+  contr:=0;
+  writeln('Digite o ano a ser verificado');
+  readln(year);
+  for i:=1 to tmx do //Verificar as matrizes
+  begin
+    for j:=1 to tmx do
+    begin
+      if (year) =(city[i][j].ano) then
+      begin
+        contr:=contr+1;
+        writeln('Encontrado raio na posição');
+        writeln('X = ', i);
+        writeln('Y = ', j);
+        writeln('          ');
+      end;
+    end;
+  end;
+  writeln('Um total de ',  contr , ' caíram neste ano');
+  raiosAno:= contr;
+end;
+
+//Opção 3: Função responsavel por contar quantos raios caíram.
+function qtraios(i:integer; j:integer): integer;
+var
+contar: integer;
+begin
+  for i:=1 to tmx do
+  begin
+    for j:=1 to tmx do
+    begin
+      if city[i][j].verificador > 0 then
+      begin
+        contar:= contar+1;
+      end;
+    end;
+  end;
+  qtraios:= contar;
+  
+end;
+//Opção 4: Procedimento que irá imprimir a matriz.
+
+procedure impMatriz();
+var
+i, j: integer;
+begin
+  for i:=1 to tmx do
+  begin
+    for j:= 1 to tmx do
+    begin
+      write('[', city[i,j].marca, ']');
+    end;
+    writeln();
+  end;
+end;
+
+//Opção 5: Gravar o arquivo de texto relacionado ao programa
+procedure gravArquivo();
+var
+i, j: integer;
+mytext: text;
+begin
+  assign(mytext, 'cacadores_de_mitos.txt');
+  rewrite(mytext);
+  for i:=1 to tmx do
+  begin
+    for j:=1 to tmx do
+    begin
+      if (city[i][j].verificador) > (0) then
+      begin
+        writeln(mytext, 'Raios caídos nas coordenadas X = ', i,' Y = ', j);
+        writeln(mytext, 'Caído na data: ', city[i][j].dia ,'/',city[i][j].mes,'/',city[i][j].ano);
+        writeln(mytext, 'Intensidade do raio foi de:', city[i][j].intensidade);
+        writeln(mytext, 'A condição do tempo era de: ', city[i][j].condicao);
+        writeln();
+        writeln();
+      end;
+    end;
+  end;
+  close(mytext);
+end;
+
+{Programa principal}
+Begin
+  
+  while(opcao<>6) do
+  begin
+    //Menu inicial
+    writeln('----------Seja bem-vindo ao registro de raios da Eletrolândia----------');
+    writeln('-----------------Digite o número para operação desejada-----------------');
+    writeln('[1] Marcar raio');
+    writeln('[2] Pesquisar raio');
+    writeln('[3] Quantos raios já caíram');
+    writeln('[4] Imprimir matriz');
+    writeln('[5] Gravar arquivo');
+    writeln('[6] Sair');
+    writeln('________________________________');
+    
+    readln(opcao);
+    //opção de erro
+    if(opcao>6) then
+    begin
+      
+      writeln('Opção inválida!');
+      writeln('Tente novamente');
+    end;
+    
+    case opcao of
+      
+      1:begin //Marcador de raio-----------------------------------------
+        marcarRaio();
+      end;
+      
+      //Fim da opção 1 -----------------------------------------
+      
+      
+      2:begin //pesquisar raios
+        clrscr;
+        raiosAno();
+        
+      end;
+      //Fim da opção 2 ------------------------------------------------
+      
+      3:begin //Quantos raios já caíram
+        clrscr;
+        
+        writeln('Cairam um total de ', qtraios(1,1));
+        
+      end;
+      4: begin //Imprimir Matriz
+        clrscr;
+        impMatriz();
+      end;
+      // Fim da impressão
+      5: begin //Gravar arquivo
+        clrscr;
+        gravArquivo();
+      end;
+      
+    end;
+  end;
+  
+End.
+
+
